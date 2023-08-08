@@ -23,14 +23,21 @@ const Blog = require("./models/blog");
 
 // ilişkiler
 //one to many 
-Category.hasMany(Blog, {
-    foreignKey: {           //! blog içerisine ilişkiden dolayı gelen categoryId name değiştirdik ve not null yaptık!  
-        name: "categoryId",
-        allowNull: false,
-        // defaultValue: 1
-    }
-}); //! Bir kategori de birden fazla blog a sahip olabilir 
-Blog.belongsTo(Category);   //! Bir Blog bir kategori ye sahip olabilir
+// Category.hasMany(Blog, {
+//     foreignKey: {           //! blog içerisine ilişkiden dolayı gelen categoryId name değiştirdik ve not null yaptık!  
+//         name: "categoryId",
+//         allowNull: true,
+//*        // defaultValue: 1
+//     },
+//     onDelete: "SET NULL",
+//     onUpdate: "SET NULL",
+// }); //! Bir kategori de birden fazla blog a sahip olabilir 
+// Blog.belongsTo(Category);   //! Bir Blog bir kategori ye sahip olabilir
+
+//many to many
+Blog.belongsToMany(Category, { through: "BlogCategories" });
+Category.belongsToMany(Blog, { through: "BlogCategories" });
+
 
 // uygulanması -sync 
 

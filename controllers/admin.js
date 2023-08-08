@@ -134,7 +134,16 @@ exports.get_blog_edit = async function (req, res) {
     const blogid = req.params.blogid;
 
     try {
-        const blog = await Blog.findByPk(blogid);
+        const blog = await Blog.findOne({
+            where: {
+                id: blogid
+            },
+            // blogda seçilen kategorilere blog edit sayfasında ulaşmak için 
+            include: {
+                model: Category,
+                attributes: ["id"]
+            }
+        })
         const categories = await Category.findAll();
 
 
@@ -198,11 +207,15 @@ exports.get_category_edit = async function (req, res) {
 
     try {
         const category = await Category.findByPk(categoryid);
+        const blogs = await category.getBlogs();
+        const countBlog = await category.countBlogs();
 
         if (category) {
-            return res.render("admin/category-edit", {
+            return res.render("admin/category-edit", {  //sayfaya gönderdik
                 title: category.dataValues.name,
-                category: category.dataValues
+                category: category.dataValues,
+                blogs: blogs,
+                countBlog: countBlog
             });
         }
 
@@ -233,7 +246,13 @@ exports.post_category_edit = async function (req, res) {
 
 exports.get_blogs = async function (req, res) {
     try {
-        const blogs = await Blog.findAll({ attributes: ["id", "baslik", "altbaslik", "resim"] });
+        const blogs = await Blog.findAll({
+            attributes: ["id", "baslik", "altbaslik", "resim"],
+            include: {
+                model: Category,
+                attributes: ["name"]
+            }
+        });
         res.render("admin/blog-list", {
             title: "blog list",
             blogs: blogs,   //blog kayıtlarını gönderdik 

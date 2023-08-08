@@ -3,7 +3,11 @@ const config = require("../config");
 const Sequelize = require("sequelize")
 const sequelize = new Sequelize(config.db.database, config.db.user, config.db.password, {
     dialect: 'mysql',
-    host: config.db.host
+    host: config.db.host,
+    define: {
+        timestamps: false   //tüm oluşturulan tabloların update create time göstermesini engelledik
+        //timestamps in gözükmesini istediğimiz tablolar için tabloları oluştururken açabiliriz!!!!
+    }
 });
 
 async function connect() {
@@ -31,4 +35,3 @@ module.exports = sequelize;
 
 // module.exports = connection.promise();
 
-// // promise, async-await => async
